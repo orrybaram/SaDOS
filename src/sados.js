@@ -19,17 +19,24 @@
         step  = 0,
         user_input = [],
         arrow_press_count = 0,
-        SaDOS_prefix = 'SaDOS: ';
-        user_prefix = '$ '
+        SaDOS_prefix = 'orryb.com: ',
+        user = "",
+        user_prefix = '$ ',
+        welcome           = "Welcome to orryb.com!",
+        $input_prefix = document.getElementById("user_prefix");
 
-     var commands = {
+    var commands = {
       ssh: 'haha noway!',
       boobs: 'hooray for boobs',
       ls: '\nroot     porn      dev',
       cd: 'permission denied',
       sudo: 'Password...',
-      alert: function() { alert('you\'re cool')}
-
+      alert: function() { alert('you\'re cool')},
+      // 'su ': function(){
+      //   user = prompt('Whats your name?');
+      //   user_prefix = user + "@orryb.com:~$ "
+      //   input_prefix = user_prefix;
+      // }
     };
 
     /**
@@ -39,9 +46,16 @@
      */
 
     this.step = function () {
+      console.log(typeof steps[step].pause);
       if (typeof steps[step + 1] !== "undefined") {
         step += 1;
-        self.print(steps[step].msg);
+        if(typeof steps[step].pause === "number") {
+          setTimeout(self.print(steps[step].msg), steps[step].pause);
+          console.log('pause');
+        } else {
+          self.print(steps[step].msg);
+          console.log('dont pause');
+        }
       }
     };
 
@@ -57,6 +71,8 @@
       } else if (option === 'nosplit') {
         text = SaDOS_prefix + text;
         print_callback.apply(null, [text]);
+      } else if (option === 'system'){
+         print_callback.apply(null, [text]);
       } else {
         text = text.split('\n');
         msg = [];
@@ -73,6 +89,9 @@
      */
 
     this.start = function () {
+      $input_prefix.innerHTML = user_prefix;
+      self.print(welcome, 'system');
+      self.listen('su ');
       self.print(steps[step].msg);
     };
 
@@ -99,6 +118,11 @@
           user_input.push(val);
           self.reset();
           self.listen(val);
+          steps[step].input = val;
+          if (steps[step].callback) {
+            callback = steps[step].callback;
+            callback();
+          }
         }
 
         if (req instanceof SaDOS_Key) {
@@ -107,11 +131,13 @@
           }
         } else if (req instanceof RegExp) {
           if (val.search(req) !== -1) {
+
             self.step();
           }
         } else {
           if (req === val) {
             self.step();
+
           }
         }
       } else if (code === 38) { //up arrow

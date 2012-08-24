@@ -8,6 +8,7 @@
       window.onload = function () {
         var console_container = document.getElementById('console'),
             input             = document.getElementById('input');
+            
 
         /**
          * The steps are the main thing. Each step defines a message
@@ -18,15 +19,16 @@
 
         var steps = [
           {
-            msg: 'Greetings, human.\nMy name is SaDOS and I am here to guide you through the Markdown basics.\nPress ENTER to continue',
-            req: new SaDOS_Key(13)
+            msg: 'Greetings, human.\nPlease enter your name:',
+            req: new SaDOS_Key(13),
+            callback: function() {
+              user = steps[0].input;
+              user_prefix = user + '@orryb.com:~$ ';
+            },
+            pause: 2000
           },
           {
-            msg: 'Okay, let us begin.\nTo make text italic, you put it in asterisk marks.\nTry something like this: *hello*',
-            req: /\*[^\*]+\*/i
-          },
-          {
-            msg: 'Well done!\n__END__',
+            msg: 'Nice to meet you.',
             req: ''
           }
         ];
@@ -52,8 +54,9 @@
         /**
          * After we configured all that, we start her up
          */
-
+       
         sados.start();
+        
         input.focus();
         document.onclick = function() {input.focus();} //input always focused
       };
@@ -62,13 +65,13 @@
     <style type="text/css">
       body { background: #000; color: #0f0; font-family: monospace; }
       #console { width: 100%; overflow-y: hidden; margin:0; }
-      #input { width: 97%; background: transparent; border: 0; padding: 0; margin: 0; font: inherit; color: inherit; }
+      #input { width: 60%; background: transparent; border: 0; padding: 0; margin: 0; font: inherit; color: inherit; display: inline-block; }
       input:focus { outline: none; }​
     </style>
   </head>
 
   <body>
     <pre id="console"></pre>
-    $ <input type="text" id="input">
+    <span id="user_prefix"></span><input type="text" id="input">
   </body>
 </html>
