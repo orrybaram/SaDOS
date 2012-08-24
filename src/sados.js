@@ -25,7 +25,7 @@
      var commands = {
       ssh: 'haha noway!',
       boobs: 'hooray for boobs',
-      ls: 'root\nporn\ndev',
+      ls: '\nroot     porn      dev',
       cd: 'permission denied',
       sudo: 'Password...',
       alert: function() { alert('you\'re cool')}
@@ -50,9 +50,12 @@
      * the provided callback.
      */
 
-    this.print = function (text, user) {
-      if (user === 'user') {
+    this.print = function (text, option) {
+      if (option === 'user') {
         text = user_prefix + text;
+        print_callback.apply(null, [text]);
+      } else if (option === 'nosplit') {
+        text = SaDOS_prefix + text;
         print_callback.apply(null, [text]);
       } else {
         text = text.split('\n');
@@ -150,7 +153,7 @@
         var msg = commands[command];
         if (val.match(command)) {
           if (typeof msg === 'string') {
-            self.print(msg);
+            self.print(msg, 'nosplit');
           } else if (typeof msg === 'function') {
             var command = commands[command];
             command();
